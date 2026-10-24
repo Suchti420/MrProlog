@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#050707" />
+    <meta name="description" content="NO WAY OUT – The Last Trip. Der spielbare Prolog: Der Anfang der Stille." />
+    <title>NO WAY OUT – The Last Trip</title>
+    <script type="module" crossorigin src="/assets/index-BRLaa_CC.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DCKNIqYp.css">
+  </head>
+  <body>
+    <canvas id="viewport" aria-label="Spielansicht" tabindex="0"></canvas>
+
+    <div id="fx" aria-hidden="true">
+      <div class="vignette"></div>
+      <div class="grain"></div>
+      <div class="scanlines"></div>
+      <div id="danger-flash"></div>
+      <div id="fade"></div>
+    </div>
+
+    <div id="boot" class="screen screen--plain">
+      <div class="boot-mark">NWO</div>
+      <div class="boot-line"><span></span></div>
+      <p>Krankenhausakten werden geladen …</p>
+    </div>
+
+    <main id="menu" class="screen screen--menu hidden">
+      <div class="menu-copy">
+        <p class="kicker">PROLOG · DER ANFANG DER STILLE</p>
+        <h1 class="game-title" data-text="NO WAY OUT">NO WAY OUT</h1>
+        <h2 class="game-subtitle">THE LAST TRIP</h2>
+        <p class="menu-lede">
+          Ein Korridor. Ein Name. Eine Tür, die nicht die richtige ist.
+        </p>
+        <nav class="menu-actions" aria-label="Hauptmenü">
+          <button id="btn-start" class="btn btn--primary" type="button">
+            <span class="btn-index">01</span> Prolog starten
+          </button>
+          <button id="btn-controls" class="btn" type="button">
+            <span class="btn-index">02</span> Steuerung
+          </button>
+          <button id="btn-settings" class="btn" type="button">
+            <span class="btn-index">03</span> Audio
+          </button>
+        </nav>
+        <p class="menu-meta">Kopfhörer empfohlen · ca. 10–15 Minuten · Deutsch</p>
+      </div>
+      <aside class="menu-side">
+        <div class="case-file">
+          <span class="case-file__stamp">PATIENT</span>
+          <strong>VOSS, NOAH</strong>
+          <dl>
+            <div><dt>Alter</dt><dd>26</dd></div>
+            <div><dt>Aufnahme</dt><dd>—</dd></div>
+            <div><dt>Status</dt><dd class="blink">NICHT ENTLASSEN</dd></div>
+          </dl>
+          <p>„Der Korridor wurde nicht verlassen.“</p>
+        </div>
+      </aside>
+      <span class="menu-version">PROLOG BUILD 1.0</span>
+    </main>
+
+    <section id="panel-controls" class="panel hidden" aria-label="Steuerung">
+      <button class="panel-close" type="button" data-close="panel-controls" aria-label="Schließen">×</button>
+      <p class="kicker">STEUERUNG</p>
+      <h3>Bewegung</h3>
+      <ul class="key-list">
+        <li><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span>Bewegen</span></li>
+        <li><kbd>Maus</kbd><span>Kamera drehen</span></li>
+        <li><kbd>Shift</kbd><span>Sprinten</span></li>
+        <li><kbd>Leertaste</kbd><span>Ausweichen</span></li>
+        <li><kbd>E</kbd><span>Interagieren</span></li>
+        <li><kbd>Esc</kbd><span>Pause</span></li>
+      </ul>
+      <p class="panel-note">Klicke in das Spielfeld, um die Maus zu erfassen. Die Steuerung ist auch ohne Mauserfassung nutzbar.</p>
+    </section>
+
+    <section id="panel-settings" class="panel hidden" aria-label="Audio">
+      <button class="panel-close" type="button" data-close="panel-settings" aria-label="Schließen">×</button>
+      <p class="kicker">AUDIO</p>
+      <h3>Lautstärke</h3>
+      <label class="slider-row">
+        <span>Gesamt</span>
+        <input id="vol-master" type="range" min="0" max="1" step="0.05" value="0.8" />
+      </label>
+      <label class="slider-row">
+        <span>Umgebung</span>
+        <input id="vol-ambient" type="range" min="0" max="1" step="0.05" value="0.7" />
+      </label>
+      <label class="slider-row">
+        <span>Effekte</span>
+        <input id="vol-fx" type="range" min="0" max="1" step="0.05" value="0.85" />
+      </label>
+      <p class="panel-note">Alle Klänge werden live synthetisiert. Es werden keine externen Audiodateien geladen.</p>
+    </section>
+
+    <div id="hud" class="hidden">
+      <div id="objective" class="hud-objective">
+        <span class="hud-label">ZIEL</span>
+        <span id="objective-text">Finde einen Weg hinaus.</span>
+      </div>
+      <div id="timer-wrap" class="hud-timer hidden">
+        <span id="timer">00:09:59</span>
+        <span class="hud-label">VERBLEIBEND</span>
+      </div>
+      <div id="stamina-wrap" class="hud-stamina">
+        <span class="hud-label">AUSDAUER</span>
+        <div class="stamina-track"><div id="stamina-bar"></div></div>
+      </div>
+      <div id="reticle" class="reticle"></div>
+      <div id="interaction" class="interaction hidden">
+        <kbd>E</kbd><span id="interaction-text">Interagieren</span>
+      </div>
+      <div id="subtitle" class="subtitle hidden" aria-live="polite"></div>
+      <div id="toast" class="toast hidden" aria-live="polite"></div>
+      <div id="skip-intro" class="skip-intro hidden">
+        <button id="btn-skip-intro" type="button">Intro überspringen</button>
+      </div>
+      <div id="lock-hint" class="lock-hint hidden">Klicken, um die Maus zu erfassen</div>
+      <div id="chapter-note" class="chapter-note hidden"></div>
+    </div>
+
+    <div id="title-card" class="title-card hidden" aria-hidden="true">
+      <h1>NO WAY OUT</h1>
+      <h2>THE LAST TRIP</h2>
+      <p>DER ANFANG DER STILLE</p>
+    </div>
+
+    <section id="document" class="document hidden" aria-modal="true" role="dialog">
+      <div class="document-sheet">
+        <p class="kicker" id="doc-kicker">KRANKENHAUSAKTE</p>
+        <h2 id="doc-title">Patientenakte</h2>
+        <div id="doc-body" class="document-body"></div>
+        <button id="btn-doc-close" class="btn document-close" type="button"><span class="btn-index">E</span> Schließen</button>
+      </div>
+    </section>
+
+    <section id="pause" class="screen screen--pause hidden">
+      <div class="pause-inner">
+        <p class="kicker">UNTERBROCHEN</p>
+        <h2>PAUSE</h2>
+        <nav class="menu-actions">
+          <button id="btn-resume" class="btn btn--primary" type="button"><span class="btn-index">01</span> Fortsetzen</button>
+          <button id="btn-restart" class="btn" type="button"><span class="btn-index">02</span> Neustart</button>
+          <button id="btn-pause-menu" class="btn" type="button"><span class="btn-index">03</span> Hauptmenü</button>
+        </nav>
+        <p class="pause-hint">Esc · Fortsetzen</p>
+      </div>
+    </section>
+
+    <section id="fail" class="screen screen--fail hidden">
+      <div class="fail-inner">
+        <p class="kicker">DER KORRIDOR ENDET HIER</p>
+        <h2>ES HAT DICH ERREICHT.</h2>
+        <p class="fail-text">Einen Atemzug lang ist da nur Stille. Dann beginnt der Korridor von vorn.</p>
+        <nav class="menu-actions">
+          <button id="btn-retry" class="btn btn--primary" type="button"><span class="btn-index">R</span> Erneut versuchen</button>
+          <button id="btn-fail-menu" class="btn" type="button"><span class="btn-index">02</span> Hauptmenü</button>
+        </nav>
+      </div>
+    </section>
+
+    <section id="ending" class="screen screen--ending hidden">
+      <div class="ending-inner">
+        <p class="ending-line" id="ending-line-1">Du erinnerst dich falsch.</p>
+        <p class="ending-line" id="ending-line-2">Oder?</p>
+        <div class="ending-chapter hidden" id="ending-chapter">
+          <span>KAPITEL 1</span>
+          <h2>DAS HAUS OHNE TÜREN</h2>
+          <p>Der Prolog endet hier.</p>
+        </div>
+        <nav class="menu-actions ending-actions hidden" id="ending-actions">
+          <button id="btn-ending-restart" class="btn btn--primary" type="button"><span class="btn-index">01</span> Prolog erneut spielen</button>
+          <button id="btn-ending-menu" class="btn" type="button"><span class="btn-index">02</span> Hauptmenü</button>
+        </nav>
+      </div>
+    </section>
+
+    <noscript>Dieses Spiel benötigt JavaScript und WebGL.</noscript>
+  </body>
+</html>
